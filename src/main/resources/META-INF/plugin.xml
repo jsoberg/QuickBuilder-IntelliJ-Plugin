@@ -1,0 +1,21 @@
+<idea-plugin url="https://github.com/jsoberg/QuickBuilder-IntelliJ-Plugin">
+    <name>QuickBuilder</name>
+    <version>1.0</version>
+    <vendor email="j15soberg [at] gmail.com">Joshua Soberg</vendor>
+
+    <application-components>
+    </application-components>
+
+    <project-components>
+    </project-components>
+
+    <actions>
+        <action id="com.soberg.dev.TestAction"
+                class="com.soberg.dev.TestAction"
+                text="Test"
+                description="Testing">
+            <keyboard-shortcut keymap="$default" first-keystroke="shift alt B"/>
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>
