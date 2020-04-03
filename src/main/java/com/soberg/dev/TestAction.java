@@ -9,6 +9,14 @@ import com.intellij.pom.Navigatable;
 import org.jetbrains.annotations.NotNull;
 
 public class TestAction extends AnAction {
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+        // Set the availability based on whether a project is open
+        Project project = e.getProject();
+        e.getPresentation().setEnabledAndVisible(project != null);
+    }
+
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
         // Using the event, create and show a dialog
@@ -21,11 +29,5 @@ public class TestAction extends AnAction {
             dlgMsg.append(String.format("\nSelected Element: %s", nav.toString()));
         }
         Messages.showMessageDialog(currentProject, dlgMsg.toString(), dlgTitle, Messages.getInformationIcon());
-    }
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-        // Set the availability based on whether a project is open
-        Project project = e.getProject();
-        e.getPresentation().setEnabledAndVisible(project != null);
     }
 }
