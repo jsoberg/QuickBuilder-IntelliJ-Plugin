@@ -8,7 +8,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.pom.Navigatable;
 import org.jetbrains.annotations.NotNull;
 
-public class TestAction extends AnAction {
+public class GenerateBuilderAction extends AnAction {
 
     @Override
     public void update(@NotNull AnActionEvent e) {

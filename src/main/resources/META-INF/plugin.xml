@@ -10,10 +10,10 @@
     </project-components>
 
     <actions>
-        <action id="com.soberg.dev.TestAction"
-                class="com.soberg.dev.TestAction"
-                text="Test"
-                description="Testing">
+        <action id="com.soberg.dev.GenerateBuilderAction"
+                class="com.soberg.dev.GenerateBuilderAction"
+                text="Generate Builder"
+                description="Generate a builder class">
             <keyboard-shortcut keymap="$default" first-keystroke="shift alt B"/>
             <add-to-group group-id="ToolsMenu" anchor="first"/>
         </action>
