@@ -1,7 +1,7 @@
 <idea-plugin url="https://github.com/jsoberg/QuickBuilder-IntelliJ-Plugin">
     <name>QuickBuilder</name>
     <version>1.0</version>
-    <vendor email="j15soberg [at] gmail.com">Joshua Soberg</vendor>
+    <vendor email="j15soberg [at] gmail.com">j15soberg@gmail.com</vendor>
 
     <application-components>
     </application-components>
