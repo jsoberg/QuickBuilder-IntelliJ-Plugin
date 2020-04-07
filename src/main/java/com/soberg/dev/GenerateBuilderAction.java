@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -13,6 +14,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class GenerateBuilderAction extends AnAction {
 
@@ -27,19 +30,18 @@ public class GenerateBuilderAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
         Project project = event.getProject();
-        String dlgTitle = "Generate Builder";
-        StringBuffer dlgMsg = new StringBuffer(event.getPresentation().getText() + " Selected!");
-        // If an element is selected in the editor, add info about it.
-        Navigatable nav = event.getData(CommonDataKeys.NAVIGATABLE);
-        if (nav != null) {
-            dlgMsg.append(String.format("\nSelected Element: %s", nav.toString()));
-        }
-        Messages.showMessageDialog(project, dlgMsg.toString(), dlgTitle, Messages.getInformationIcon());
+        VirtualFile currentFile = getCurrentOpenFile(project);
+        boolean isSourceFile = isSourceFile(currentFile);
+        String message = (currentFile != null) ? currentFile.getPath() : "No File";
+        message += (isSourceFile ? " is" : " is not") + " a source file";
+        String title = "Generate Builder";
+        Icon icon = isSourceFile ? Messages.getInformationIcon() : Messages.getErrorIcon();
+        Messages.showMessageDialog(project, message, title, icon);
     }
 
     @Nullable
-    private VirtualFile getCurrentOpenFile(Project project) {
-        Editor textEditor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+    private VirtualFile getCurrentOpenFile(@Nullable Project project) {
+        Editor textEditor = (project != null) ? FileEditorManager.getInstance(project).getSelectedTextEditor() : null;
         if (textEditor == null) {
             return null;
         }
@@ -47,8 +49,7 @@ public class GenerateBuilderAction extends AnAction {
         return FileDocumentManager.getInstance().getFile(document);
     }
 
-    private boolean isSourceFile(Project project) {
-        VirtualFile currentFile = getCurrentOpenFile(project);
-        return currentFile != null && JAVA_EXTENSION.equals(currentFile.getExtension());
+    private boolean isSourceFile(@Nullable VirtualFile currentFile) {
+        return (currentFile != null) && JAVA_EXTENSION.equals(currentFile.getExtension());
     }
 }
