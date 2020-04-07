@@ -21,12 +21,20 @@ public class GenerateBuilderAction extends AnAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         Project project = e.getProject();
-        e.getPresentation().setEnabledAndVisible(isSourceFileOpen(project));
+        e.getPresentation().setEnabledAndVisible(project != null);
     }
 
-    private boolean isSourceFileOpen(Project project) {
-        VirtualFile currentFile = getCurrentOpenFile(project);
-        return currentFile != null && JAVA_EXTENSION.equals(currentFile.getExtension());
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent event) {
+        Project project = event.getProject();
+        String dlgTitle = "Generate Builder";
+        StringBuffer dlgMsg = new StringBuffer(event.getPresentation().getText() + " Selected!");
+        // If an element is selected in the editor, add info about it.
+        Navigatable nav = event.getData(CommonDataKeys.NAVIGATABLE);
+        if (nav != null) {
+            dlgMsg.append(String.format("\nSelected Element: %s", nav.toString()));
+        }
+        Messages.showMessageDialog(project, dlgMsg.toString(), dlgTitle, Messages.getInformationIcon());
     }
 
     @Nullable
@@ -39,17 +47,8 @@ public class GenerateBuilderAction extends AnAction {
         return FileDocumentManager.getInstance().getFile(document);
     }
 
-    @Override
-    public void actionPerformed(@NotNull AnActionEvent event) {
-        // Using the event, create and show a dialog
-        Project currentProject = event.getProject();
-        StringBuffer dlgMsg = new StringBuffer(event.getPresentation().getText() + " Selected!");
-        String dlgTitle = event.getPresentation().getDescription();
-        // If an element is selected in the editor, add info about it.
-        Navigatable nav = event.getData(CommonDataKeys.NAVIGATABLE);
-        if (nav != null) {
-            dlgMsg.append(String.format("\nSelected Element: %s", nav.toString()));
-        }
-        Messages.showMessageDialog(currentProject, dlgMsg.toString(), dlgTitle, Messages.getInformationIcon());
+    private boolean isSourceFile(Project project) {
+        VirtualFile currentFile = getCurrentOpenFile(project);
+        return currentFile != null && JAVA_EXTENSION.equals(currentFile.getExtension());
     }
 }
