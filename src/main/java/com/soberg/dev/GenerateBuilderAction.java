@@ -32,11 +32,13 @@ public class GenerateBuilderAction extends AnAction {
         Project project = event.getProject();
         VirtualFile currentFile = getCurrentOpenFile(project);
         boolean isSourceFile = isSourceFile(currentFile);
-        String message = (currentFile != null) ? currentFile.getPath() : "No File";
-        message += (isSourceFile ? " is" : " is not") + " a source file";
-        String title = "Generate Builder";
-        Icon icon = isSourceFile ? Messages.getInformationIcon() : Messages.getErrorIcon();
-        Messages.showMessageDialog(project, message, title, icon);
+        if (isSourceFile) {
+            generateBuilder(project, currentFile);
+        } else {
+            String message = (currentFile != null) ? currentFile.getPath() + " is not a source file" : "Error";
+            String title = "Generate Builder";
+            Messages.showMessageDialog(project, message, title, Messages.getErrorIcon());
+        }
     }
 
     @Nullable
@@ -51,5 +53,9 @@ public class GenerateBuilderAction extends AnAction {
 
     private boolean isSourceFile(@Nullable VirtualFile currentFile) {
         return (currentFile != null) && JAVA_EXTENSION.equals(currentFile.getExtension());
+    }
+
+    private void generateBuilder(Project project, VirtualFile currentFile) {
+        // TODO: Launch builder generation task
     }
 }
