@@ -1,4 +1,4 @@
-package com.soberg.dev;
+package com.soberg.dev.quickbuilder;
 
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;

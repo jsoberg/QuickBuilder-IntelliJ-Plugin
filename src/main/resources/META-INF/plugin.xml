@@ -10,8 +10,8 @@
     </project-components>
 
     <actions>
-        <action id="com.soberg.dev.GenerateBuilderAction"
-                class="com.soberg.dev.GenerateBuilderAction"
+        <action id="com.soberg.dev.quickbuilder.GenerateBuilderAction"
+                class="com.soberg.dev.quickbuilder.GenerateBuilderAction"
                 text="Generate Builder"
                 description="Generate a builder class">
             <keyboard-shortcut keymap="$default" first-keystroke="shift alt B"/>
