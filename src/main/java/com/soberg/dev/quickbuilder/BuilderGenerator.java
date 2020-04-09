@@ -16,9 +16,21 @@ public class BuilderGenerator {
         // TODO: Perform additional operations on the builder class.
     }
 
-    private PsiClass createBuilderClass() {
+    private PsiClass createBuilderClass() throws BuilderGenerationException {
         JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(project);
         PsiElementFactory elementFactory = psiFacade.getElementFactory();
-        return elementFactory.createClass("Builder");
+        PsiClass builderClass = elementFactory.createClass("Builder");
+        addClassModifiers(builderClass);
+        return builderClass;
+    }
+
+    private void addClassModifiers(PsiClass builderClass) throws BuilderGenerationException {
+        PsiModifierList modifiers = builderClass.getModifierList();
+        if (modifiers == null) {
+            throw new BuilderGenerationException("Problem finding modifier list for Builder class");
+        }
+        modifiers.setModifierProperty(PsiModifier.PUBLIC, true);
+        modifiers.setModifierProperty(PsiModifier.STATIC, true);
+        modifiers.setModifierProperty(PsiModifier.FINAL, true);
     }
 }
