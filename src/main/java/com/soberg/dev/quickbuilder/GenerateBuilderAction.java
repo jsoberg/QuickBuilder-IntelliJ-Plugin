@@ -2,19 +2,17 @@ package com.soberg.dev.quickbuilder;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiClass;
+import com.soberg.dev.quickbuilder.environment.CurrentlyOpenedClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class GenerateBuilderAction extends AnAction {
-
-    private static final String JAVA_EXTENSION = "java";
 
     @Override
     public void update(@NotNull AnActionEvent e) {
@@ -25,36 +23,34 @@ public class GenerateBuilderAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
         Project project = event.getProject();
-        VirtualFile currentFile = getCurrentOpenFile(project);
-        boolean isSourceFile = isSourceFile(currentFile);
-        if (isSourceFile) {
-            generateBuilder(project, currentFile);
+        CurrentlyOpenedClass openedClass = new CurrentlyOpenedClass(project);
+        if (openedClass.isValidClass()) {
+            generateBuilder(project, openedClass);
         } else {
-            String message = (currentFile != null) ? currentFile.getPath() + " is not a source file" : "Error";
+            VirtualFile sourceFile = openedClass.getSourceFile();
+            String message = (sourceFile != null) ? sourceFile.getNameWithoutExtension() + " is not a valid buildable class"
+                    : "No buildable class found";
             String title = "Generate Builder";
             Messages.showMessageDialog(project, message, title, Messages.getErrorIcon());
         }
     }
 
-    @Nullable
-    private VirtualFile getCurrentOpenFile(@Nullable Project project) {
-        Editor textEditor = (project != null) ? FileEditorManager.getInstance(project).getSelectedTextEditor() : null;
-        if (textEditor == null) {
-            return null;
-        }
-        Document document = textEditor.getDocument();
-        return FileDocumentManager.getInstance().getFile(document);
-    }
-
-    private boolean isSourceFile(@Nullable VirtualFile currentFile) {
-        return (currentFile != null) && JAVA_EXTENSION.equals(currentFile.getExtension());
-    }
-
-    private void generateBuilder(Project project, VirtualFile currentFile) {
+    private void generateBuilder(Project project, CurrentlyOpenedClass openedClass) {
         try {
-            new BuilderGenerator(project).generateBuilder(currentFile);
+            PsiClass sourceClass = openedClass.getSourceClass();
+            PsiClass builderClass = new BuilderGenerator(project)
+                    .generateBuilderClass(sourceClass);
+            CommandProcessor processor = CommandProcessor.getInstance();
+            processor.executeCommand(project, () -> runWriteAction(sourceClass, builderClass), "WriteBuilder", this);
         } catch (BuilderGenerationException e) {
             // TODO: Handle exception
         }
+    }
+
+    private void runWriteAction(PsiClass sourceClass, PsiClass builderClass) {
+        Application application = ApplicationManager.getApplication();
+        application.runWriteAction(() -> {
+            sourceClass.add(builderClass);
+        });
     }
 }
