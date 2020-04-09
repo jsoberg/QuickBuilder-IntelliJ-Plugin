@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
+import org.apache.maven.model.Build;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,6 +57,10 @@ public class GenerateBuilderAction extends AnAction {
     }
 
     private void generateBuilder(Project project, VirtualFile currentFile) {
-        // TODO: Launch builder generation task
+        try {
+            new BuilderGenerator(project).generateBuilder(currentFile);
+        } catch (BuilderGenerationException e) {
+            // TODO: Handle exception
+        }
     }
 }

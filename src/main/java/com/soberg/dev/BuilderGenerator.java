@@ -1,13 +1,14 @@
 package com.soberg.dev;
 
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassOwner;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
 
 public class BuilderGenerator {
+
     private final Project project;
 
     public BuilderGenerator(Project project) {
@@ -15,10 +16,13 @@ public class BuilderGenerator {
     }
 
     public void generateBuilder(VirtualFile sourceFile) throws BuilderGenerationException {
-        PsiClass fileClass = findClassForFile(sourceFile);
+        PsiClass sourceClass = findClassForFile(sourceFile);
+        PsiClass builderClass = createBuilderClass();
+        CommandProcessor processor = CommandProcessor.getInstance();
+        processor.executeCommand(project, () -> runWriteAction(sourceClass, builderClass), "WriteBuilder", this);
     }
 
-    public PsiClass findClassForFile(VirtualFile sourceFile) throws BuilderGenerationException {
+    private PsiClass findClassForFile(VirtualFile sourceFile) throws BuilderGenerationException {
         PsiFile psiFile = PsiManager.getInstance(project).findFile(sourceFile);
         if (!(psiFile instanceof PsiClassOwner)) {
             throw new BuilderGenerationException(sourceFile.getName() + " does not contain a class");
@@ -30,4 +34,16 @@ public class BuilderGenerator {
         return classes[0];
     }
 
+    private PsiClass createBuilderClass() {
+        JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(project);
+        PsiElementFactory elementFactory = psiFacade.getElementFactory();
+        return elementFactory.createClass("Builder");
+    }
+
+    private void runWriteAction(PsiClass sourceClass, PsiClass builderClass) {
+        Application application = ApplicationManager.getApplication();
+        application.runWriteAction(() -> {
+            sourceClass.add(builderClass);
+        });
+    }
 }
