@@ -24,10 +24,11 @@ public class GenerateBuilderAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent event) {
         Project project = event.getProject();
         CurrentlyOpenedClass openedClass = new CurrentlyOpenedClass(project);
-        if (openedClass.isValidClass()) {
-            generateBuilder(project, openedClass);
+        PsiClass sourceClass = openedClass.getSourceClass();
+        if (sourceClass != null) {
+            generateBuilder(project, sourceClass);
         } else {
-            VirtualFile sourceFile = openedClass.getSourceFile();
+            VirtualFile sourceFile = openedClass.getFile();
             String message = (sourceFile != null) ? sourceFile.getNameWithoutExtension() + " is not a valid buildable class"
                     : "No buildable class found";
             String title = "Generate Builder";
@@ -35,9 +36,8 @@ public class GenerateBuilderAction extends AnAction {
         }
     }
 
-    private void generateBuilder(Project project, CurrentlyOpenedClass openedClass) {
+    private void generateBuilder(Project project, PsiClass sourceClass) {
         try {
-            PsiClass sourceClass = openedClass.getSourceClass();
             PsiClass builderClass = new BuilderGenerator(project)
                     .generateBuilderClass(sourceClass);
             CommandProcessor processor = CommandProcessor.getInstance();
