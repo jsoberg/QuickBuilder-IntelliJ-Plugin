@@ -1,5 +1,6 @@
 package com.soberg.dev.quickbuilder;
 
+import com.intellij.lang.jvm.JvmModifier;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 
@@ -11,9 +12,10 @@ public class BuilderGenerator {
         this.project = project;
     }
 
-    public PsiClass generateBuilderClass(PsiClass sourceFile) throws BuilderGenerationException {
-        return createBuilderClass();
-        // TODO: Perform additional operations on the builder class.
+    public PsiClass generateBuilderClass(PsiClass sourceClass) throws BuilderGenerationException {
+        PsiClass builderClass = createBuilderClass();
+        addBuilderFields(sourceClass, builderClass);
+        return builderClass;
     }
 
     private PsiClass createBuilderClass() throws BuilderGenerationException {
@@ -32,5 +34,12 @@ public class BuilderGenerator {
         modifiers.setModifierProperty(PsiModifier.PUBLIC, true);
         modifiers.setModifierProperty(PsiModifier.STATIC, true);
         modifiers.setModifierProperty(PsiModifier.FINAL, true);
+    }
+
+    private void addBuilderFields(PsiClass sourceClass, PsiClass builderClass) {
+        PsiField[] fields = sourceClass.getFields();
+        for (PsiField field : fields) {
+            builderClass.add(field);
+        }
     }
 }
