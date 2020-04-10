@@ -14,8 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class CurrentlyOpenedClass {
 
-    private static final String JAVA_EXTENSION = "java";
-
     @Nullable
     private final VirtualFile sourceFile;
     @Nullable
