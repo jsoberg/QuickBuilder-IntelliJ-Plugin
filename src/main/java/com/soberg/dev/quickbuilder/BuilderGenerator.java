@@ -1,15 +1,15 @@
 package com.soberg.dev.quickbuilder;
 
-import com.intellij.lang.jvm.JvmModifier;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 
 public class BuilderGenerator {
 
-    private final Project project;
+    private final PsiElementFactory elementFactory;
 
     public BuilderGenerator(Project project) {
-        this.project = project;
+        JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(project);
+        this.elementFactory = psiFacade.getElementFactory();
     }
 
     public PsiClass generateBuilderClass(PsiClass sourceClass) throws BuilderGenerationException {
@@ -19,8 +19,6 @@ public class BuilderGenerator {
     }
 
     private PsiClass createBuilderClass() throws BuilderGenerationException {
-        JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(project);
-        PsiElementFactory elementFactory = psiFacade.getElementFactory();
         PsiClass builderClass = elementFactory.createClass("Builder");
         addClassModifiers(builderClass);
         return builderClass;
@@ -39,7 +37,31 @@ public class BuilderGenerator {
     private void addBuilderFields(PsiClass sourceClass, PsiClass builderClass) {
         PsiField[] fields = sourceClass.getFields();
         for (PsiField field : fields) {
-            builderClass.add(field);
+            addFieldToBuilder(builderClass, field);
         }
+    }
+
+    private void addFieldToBuilder(PsiClass builderClass, PsiField field) {
+        if (isValidBuilderField(field)) {
+            builderClass.add(createFieldForBuilder(field));
+        }
+    }
+
+    private boolean isValidBuilderField(PsiField field) {
+        PsiModifierList modifiers = field.getModifierList();
+        if (modifiers == null) {
+            return false;
+        }
+        // We want to add builder fields for all non-static class fields.
+        return !modifiers.hasExplicitModifier(PsiModifier.STATIC);
+    }
+
+    private PsiField createFieldForBuilder(PsiField field) {
+        String fieldName = field.getName();
+        if (fieldName == null) {
+            throw new IllegalStateException("Field " + field + " has no name");
+        }
+        // We just want a private field of the same name, without any of the other modifiers.
+        return elementFactory.createField(fieldName, field.getType());
     }
 }
