@@ -5,14 +5,14 @@ import com.intellij.psi.*;
 
 public class BuilderGenerator {
 
-    private final BuilderClassGenerator classGenerator;
-    private final BuilderFieldGenerator fieldGenerator;
+    private final ClassGenerator classGenerator;
+    private final FieldGenerator fieldGenerator;
 
     public BuilderGenerator(Project project) {
         JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(project);
         PsiElementFactory elementFactory = psiFacade.getElementFactory();
-        this.classGenerator = new BuilderClassGenerator(elementFactory);
-        this.fieldGenerator = new BuilderFieldGenerator(elementFactory);
+        this.classGenerator = new ClassGenerator(elementFactory);
+        this.fieldGenerator = new FieldGenerator(elementFactory);
     }
 
     public PsiClass generateBuilderClass(PsiClass sourceClass) throws BuilderGenerationException {

@@ -2,11 +2,11 @@ package com.soberg.dev.quickbuilder.generation;
 
 import com.intellij.psi.*;
 
-class BuilderFieldGenerator {
+class FieldGenerator {
 
     private final PsiElementFactory elementFactory;
 
-    BuilderFieldGenerator(PsiElementFactory elementFactory) {
+    FieldGenerator(PsiElementFactory elementFactory) {
         this.elementFactory = elementFactory;
     }
 
