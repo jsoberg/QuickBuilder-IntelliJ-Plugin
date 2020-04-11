@@ -3,6 +3,7 @@ package com.soberg.dev.quickbuilder;
 import com.intellij.psi.*;
 
 class BuilderFieldGenerator {
+    
     private final PsiElementFactory elementFactory;
 
     BuilderFieldGenerator(PsiElementFactory elementFactory) {

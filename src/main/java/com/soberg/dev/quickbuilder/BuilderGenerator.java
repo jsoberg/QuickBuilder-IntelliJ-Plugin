@@ -5,35 +5,20 @@ import com.intellij.psi.*;
 
 public class BuilderGenerator {
 
-    private final PsiElementFactory elementFactory;
+    private final BuilderClassGenerator classGenerator;
     private final BuilderFieldGenerator fieldGenerator;
 
     public BuilderGenerator(Project project) {
         JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(project);
-        this.elementFactory = psiFacade.getElementFactory();
+        PsiElementFactory elementFactory = psiFacade.getElementFactory();
+        this.classGenerator = new BuilderClassGenerator(elementFactory);
         this.fieldGenerator = new BuilderFieldGenerator(elementFactory);
     }
 
     public PsiClass generateBuilderClass(PsiClass sourceClass) throws BuilderGenerationException {
-        PsiClass builderClass = createBuilderClass();
         PsiField[] sourceFields = sourceClass.getFields();
+        PsiClass builderClass = classGenerator.generateBuilderClass();
         fieldGenerator.addBuilderFields(builderClass, sourceFields);
         return builderClass;
-    }
-
-    private PsiClass createBuilderClass() throws BuilderGenerationException {
-        PsiClass builderClass = elementFactory.createClass("Builder");
-        addClassModifiers(builderClass);
-        return builderClass;
-    }
-
-    private void addClassModifiers(PsiClass builderClass) throws BuilderGenerationException {
-        PsiModifierList modifiers = builderClass.getModifierList();
-        if (modifiers == null) {
-            throw new BuilderGenerationException("Problem finding modifier list for Builder class");
-        }
-        modifiers.setModifierProperty(PsiModifier.PUBLIC, true);
-        modifiers.setModifierProperty(PsiModifier.STATIC, true);
-        modifiers.setModifierProperty(PsiModifier.FINAL, true);
     }
 }
