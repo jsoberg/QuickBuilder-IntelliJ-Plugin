@@ -10,6 +10,8 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.soberg.dev.quickbuilder.environment.CurrentlyOpenedClass;
+import com.soberg.dev.quickbuilder.generation.BuilderGenerationException;
+import com.soberg.dev.quickbuilder.generation.BuilderGenerator;
 import org.jetbrains.annotations.NotNull;
 
 public class GenerateBuilderAction extends AnAction {

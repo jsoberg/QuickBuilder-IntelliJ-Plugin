@@ -1,4 +1,4 @@
-package com.soberg.dev.quickbuilder;
+package com.soberg.dev.quickbuilder.generation;
 
 import com.intellij.psi.*;
 
