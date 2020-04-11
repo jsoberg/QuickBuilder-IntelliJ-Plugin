@@ -10,6 +10,7 @@ class ClassGenerator {
         this.elementFactory = elementFactory;
     }
 
+    /** Generates an empty builder {@link PsiClass}. */
     PsiClass generateBuilderClass() throws BuilderGenerationException {
         PsiClass builderClass = elementFactory.createClass("Builder");
         addClassModifiers(builderClass);
