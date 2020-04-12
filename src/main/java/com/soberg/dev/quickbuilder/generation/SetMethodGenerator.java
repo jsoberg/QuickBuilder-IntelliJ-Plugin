@@ -7,14 +7,16 @@ import com.intellij.psi.PsiMethod;
 
 import java.util.Collection;
 
-class MethodGenerator {
+class SetMethodGenerator {
 
     private final PsiElementFactory elementFactory;
 
-    MethodGenerator(PsiElementFactory elementFactory) {
+    SetMethodGenerator(PsiElementFactory elementFactory) {
         this.elementFactory = elementFactory;
     }
 
+    /** Generates set methods for the specified {@link Collection<PsiField>} builder fields, and adds them to the
+     * specified {@link PsiClass} builder class. */
     void addSetMethods(PsiClass builderClass, Collection<PsiField> builderFields) {
         for (PsiField field : builderFields) {
             addSetMethodToBuilder(builderClass, field);

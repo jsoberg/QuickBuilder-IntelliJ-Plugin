@@ -9,14 +9,14 @@ public class BuilderGenerator {
 
     private final ClassGenerator classGenerator;
     private final FieldGenerator fieldGenerator;
-    private final MethodGenerator methodGenerator;
+    private final SetMethodGenerator setMethodGenerator;
 
     public BuilderGenerator(Project project) {
         JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(project);
         PsiElementFactory elementFactory = psiFacade.getElementFactory();
         this.classGenerator = new ClassGenerator(elementFactory);
         this.fieldGenerator = new FieldGenerator(elementFactory);
-        this.methodGenerator = new MethodGenerator(elementFactory);
+        this.setMethodGenerator = new SetMethodGenerator(elementFactory);
     }
 
     public PsiClass generateBuilderClass(PsiClass sourceClass) throws BuilderGenerationException {
@@ -24,7 +24,7 @@ public class BuilderGenerator {
         PsiClass builderClass = classGenerator.generateBuilderClass();
         Collection<PsiField> builderFields = fieldGenerator.generateBuilderFields(sourceFields);
         addFieldsToBuilderClass(builderClass, builderFields);
-        methodGenerator.addSetMethods(builderClass, builderFields);
+        setMethodGenerator.addSetMethods(builderClass, builderFields);
         return builderClass;
     }
 
