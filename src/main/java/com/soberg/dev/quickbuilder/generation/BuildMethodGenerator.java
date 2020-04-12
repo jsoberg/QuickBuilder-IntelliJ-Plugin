@@ -1,0 +1,28 @@
+package com.soberg.dev.quickbuilder.generation;
+
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiMethod;
+
+class BuildMethodGenerator {
+
+    private final PsiElementFactory elementFactory;
+
+    BuildMethodGenerator(PsiElementFactory elementFactory) {
+        this.elementFactory = elementFactory;
+    }
+
+    void addBuildMethod(PsiClass sourceClass, PsiClass builderClass) {
+        PsiMethod buildMethod = generateBuildMethod(sourceClass, builderClass);
+        builderClass.add(buildMethod);
+    }
+
+    private PsiMethod generateBuildMethod(PsiClass sourceClass, PsiClass builderClass) {
+        String sourceClassName = sourceClass.getName();
+        return elementFactory.createMethodFromText(
+                "public " + sourceClassName + " build() {\n"
+                + "    return new " + sourceClassName + "(this)\n"
+                +"}"
+        , builderClass);
+    }
+}
