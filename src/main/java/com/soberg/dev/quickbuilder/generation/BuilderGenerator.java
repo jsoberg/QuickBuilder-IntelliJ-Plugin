@@ -3,6 +3,8 @@ package com.soberg.dev.quickbuilder.generation;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 
+import java.util.Collection;
+
 public class BuilderGenerator {
 
     private final ClassGenerator classGenerator;
@@ -20,8 +22,15 @@ public class BuilderGenerator {
     public PsiClass generateBuilderClass(PsiClass sourceClass) throws BuilderGenerationException {
         PsiField[] sourceFields = sourceClass.getFields();
         PsiClass builderClass = classGenerator.generateBuilderClass();
-        fieldGenerator.addBuilderFields(builderClass, sourceFields);
-        methodGenerator.addSetMethods(builderClass, sourceFields);
+        Collection<PsiField> builderFields = fieldGenerator.generateBuilderFields(sourceFields);
+        addFieldsToBuilderClass(builderClass, builderFields);
+        methodGenerator.addSetMethods(builderClass, builderFields);
         return builderClass;
+    }
+
+    private void addFieldsToBuilderClass(PsiClass builderClass, Collection<PsiField> builderFields) {
+        for (PsiField field : builderFields) {
+            builderClass.add(field);
+        }
     }
 }

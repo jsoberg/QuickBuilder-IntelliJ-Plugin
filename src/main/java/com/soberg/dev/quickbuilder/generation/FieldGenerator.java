@@ -1,6 +1,11 @@
 package com.soberg.dev.quickbuilder.generation;
 
 import com.intellij.psi.*;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 class FieldGenerator {
 
@@ -10,18 +15,24 @@ class FieldGenerator {
         this.elementFactory = elementFactory;
     }
 
-    /** Adds builder fields (obtained from the specified {@link PsiField[]} fields) to the specified
-     * {@link PsiClass} builder class.*/
-    void addBuilderFields(PsiClass builderClass, PsiField[] sourceFields) {
+    /** @return A collection of valid builder fields (obtained from the specified {@link PsiField[]} fields) */
+    Collection<PsiField> generateBuilderFields(PsiField[] sourceFields) {
+        List<PsiField> validFields = new ArrayList<>();
         for (PsiField field : sourceFields) {
-            addFieldToBuilder(builderClass, field);
+            PsiField builderField = generateFieldForBuilder(field);
+            if (builderField != null) {
+                validFields.add(builderField);
+            }
         }
+        return validFields;
     }
 
-    private void addFieldToBuilder(PsiClass builderClass, PsiField field) {
-        if (isValidBuilderField(field)) {
-            builderClass.add(createFieldForBuilder(field));
+    @Nullable
+    private PsiField generateFieldForBuilder(PsiField sourceField) {
+        if (isValidBuilderField(sourceField)) {
+            return createFieldForBuilder(sourceField);
         }
+        return null;
     }
 
     private boolean isValidBuilderField(PsiField field) {

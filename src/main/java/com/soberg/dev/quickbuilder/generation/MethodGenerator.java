@@ -5,6 +5,8 @@ import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 
+import java.util.Collection;
+
 class MethodGenerator {
 
     private final PsiElementFactory elementFactory;
@@ -13,8 +15,8 @@ class MethodGenerator {
         this.elementFactory = elementFactory;
     }
 
-    void addSetMethods(PsiClass builderClass, PsiField[] fields) {
-        for (PsiField field : fields) {
+    void addSetMethods(PsiClass builderClass, Collection<PsiField> builderFields) {
+        for (PsiField field : builderFields) {
             addSetMethodToBuilder(builderClass, field);
         }
     }
