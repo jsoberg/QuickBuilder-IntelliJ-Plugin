@@ -22,19 +22,23 @@ class MethodGenerator {
     }
 
     private void addSetMethodToBuilder(PsiClass builderClass, PsiField field) {
-        String fieldName = field.getName();
-        if (fieldName == null) {
-            throw new IllegalStateException("Could not find name for field " + field);
-        }
-        String methodName = generateSetMethodName(fieldName);
-        String fieldType = field.getType().getPresentableText();
-        String methodText = "public Builder " + methodName + "(" + fieldType + " " + fieldName + ")"
-                + " { this." + fieldName + " = " + fieldName + "; return this; }";
-        PsiMethod setMethod = elementFactory.createMethodFromText(methodText, field);
+        PsiMethod setMethod = generateSetMethod(field);
         builderClass.add(setMethod);
     }
 
-    private String generateSetMethodName(String fieldName) {
+    private PsiMethod generateSetMethod(PsiField parentField) {
+        String fieldName = parentField.getName();
+        if (fieldName == null) {
+            throw new IllegalStateException("Could not find name for field " + parentField);
+        }
+        String methodName = getSetMethodName(fieldName);
+        String fieldType = parentField.getType().getPresentableText();
+        String methodText = "public Builder " + methodName + "(" + fieldType + " " + fieldName + ")"
+                + " { this." + fieldName + " = " + fieldName + "; return this; }";
+       return elementFactory.createMethodFromText(methodText, parentField);
+    }
+
+    private String getSetMethodName(String fieldName) {
         String methodAppend = toInitialUpperCase(fieldName);
         return "set" + methodAppend;
     }
