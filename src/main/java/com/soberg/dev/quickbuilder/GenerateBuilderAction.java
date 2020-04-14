@@ -28,31 +28,18 @@ public class GenerateBuilderAction extends AnAction {
         CurrentlyOpenedClass openedClass = new CurrentlyOpenedClass(project);
         PsiClass sourceClass = openedClass.getSourceClass();
         if (sourceClass != null) {
-            generateBuilder(project, sourceClass);
+            BuilderGenerationCommand command = new BuilderGenerationCommand(project);
+            command.execute(sourceClass);
         } else {
-            VirtualFile sourceFile = openedClass.getFile();
-            String message = (sourceFile != null) ? sourceFile.getNameWithoutExtension() + " is not a valid buildable class"
-                    : "No buildable class found";
-            String title = "Generate Builder";
-            Messages.showMessageDialog(project, message, title, Messages.getErrorIcon());
+            showErrorMessage(project, openedClass);
         }
     }
 
-    private void generateBuilder(Project project, PsiClass sourceClass) {
-        try {
-            PsiClass builderClass = new BuilderGenerator(project)
-                    .generateBuilderClass(sourceClass);
-            CommandProcessor processor = CommandProcessor.getInstance();
-            processor.executeCommand(project, () -> runWriteAction(sourceClass, builderClass), "WriteBuilder", this);
-        } catch (BuilderGenerationException e) {
-            // TODO: Handle exception
-        }
-    }
-
-    private void runWriteAction(PsiClass sourceClass, PsiClass builderClass) {
-        Application application = ApplicationManager.getApplication();
-        application.runWriteAction(() -> {
-            sourceClass.add(builderClass);
-        });
+    private void showErrorMessage(Project project, CurrentlyOpenedClass openedClass) {
+        VirtualFile sourceFile = openedClass.getFile();
+        String message = (sourceFile != null) ? sourceFile.getNameWithoutExtension() + " is not a valid buildable class"
+                : "No buildable class found";
+        String title = "Generate Builder";
+        Messages.showMessageDialog(project, message, title, Messages.getErrorIcon());
     }
 }
