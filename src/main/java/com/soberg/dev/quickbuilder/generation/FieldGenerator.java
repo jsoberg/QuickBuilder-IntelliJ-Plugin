@@ -16,7 +16,7 @@ class FieldGenerator {
     }
 
     /** @return A collection of valid builder fields (obtained from the specified {@link PsiField[]} fields) */
-    Collection<PsiField> generateBuilderFields(PsiField[] sourceFields) {
+    Collection<PsiField> generateBuilderFields(PsiField[] sourceFields) throws BuilderGenerationException {
         List<PsiField> validFields = new ArrayList<>();
         for (PsiField field : sourceFields) {
             PsiField builderField = generateFieldForBuilder(field);
@@ -28,7 +28,7 @@ class FieldGenerator {
     }
 
     @Nullable
-    private PsiField generateFieldForBuilder(PsiField sourceField) {
+    private PsiField generateFieldForBuilder(PsiField sourceField) throws BuilderGenerationException {
         if (isValidBuilderField(sourceField)) {
             return createFieldForBuilder(sourceField);
         }
@@ -44,10 +44,10 @@ class FieldGenerator {
         return !modifiers.hasExplicitModifier(PsiModifier.STATIC);
     }
 
-    private PsiField createFieldForBuilder(PsiField field) {
+    private PsiField createFieldForBuilder(PsiField field) throws BuilderGenerationException {
         String fieldName = field.getName();
         if (fieldName == null) {
-            throw new IllegalStateException("Field " + field + " has no name");
+            throw new BuilderGenerationException("Field " + field + " has no name");
         }
         // We just want a private field of the same name, without any of the other modifiers.
         return elementFactory.createField(fieldName, field.getType());

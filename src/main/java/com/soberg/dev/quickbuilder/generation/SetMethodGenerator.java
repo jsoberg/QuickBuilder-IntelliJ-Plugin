@@ -17,21 +17,21 @@ class SetMethodGenerator {
 
     /** Generates set methods for the specified {@link Collection<PsiField>} builder fields, and adds them to the
      * specified {@link PsiClass} builder class. */
-    void addSetMethods(PsiClass builderClass, Collection<PsiField> builderFields) {
+    void addSetMethods(PsiClass builderClass, Collection<PsiField> builderFields) throws BuilderGenerationException {
         for (PsiField field : builderFields) {
             addSetMethodToBuilder(builderClass, field);
         }
     }
 
-    private void addSetMethodToBuilder(PsiClass builderClass, PsiField field) {
+    private void addSetMethodToBuilder(PsiClass builderClass, PsiField field) throws BuilderGenerationException {
         PsiMethod setMethod = generateSetMethod(field);
         builderClass.add(setMethod);
     }
 
-    private PsiMethod generateSetMethod(PsiField parentField) {
+    private PsiMethod generateSetMethod(PsiField parentField) throws BuilderGenerationException {
         String fieldName = parentField.getName();
         if (fieldName == null) {
-            throw new IllegalStateException("Could not find name for field " + parentField);
+            throw new BuilderGenerationException("Could not find name for field " + parentField);
         }
         String methodName = getSetMethodName(fieldName);
         String fieldType = parentField.getType().getPresentableText();
