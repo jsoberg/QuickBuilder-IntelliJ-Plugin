@@ -1,7 +1,10 @@
 package com.soberg.dev.quickbuilder.generation;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiField;
 
 import java.util.Collection;
 

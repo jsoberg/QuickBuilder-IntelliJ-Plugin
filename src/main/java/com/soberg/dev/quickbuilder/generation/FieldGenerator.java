@@ -1,6 +1,9 @@
 package com.soberg.dev.quickbuilder.generation;
 
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiModifierList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -15,7 +18,9 @@ class FieldGenerator {
         this.elementFactory = elementFactory;
     }
 
-    /** @return A collection of valid builder fields (obtained from the specified {@link PsiField[]} fields) */
+    /**
+     * @return A collection of valid builder fields (obtained from the specified {@link PsiField[]} fields)
+     */
     Collection<PsiField> generateBuilderFields(PsiField[] sourceFields) throws BuilderGenerationException {
         List<PsiField> validFields = new ArrayList<>();
         for (PsiField field : sourceFields) {

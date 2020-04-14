@@ -22,11 +22,12 @@ class BuilderGenerationCommand {
         this.application = ApplicationManager.getApplication();
     }
 
-    /** Generates a builder class for the specified source class.
-     *
+    /**
+     * Generates a builder class for the specified source class.
+     * <p>
      * Note: This action will run within a {@link CommandProcessor}, and within a
      * {@link Application#runWriteAction(Runnable)} call.
-     * */
+     */
     void execute(PsiClass sourceClass) {
         processor.executeCommand(project, () -> runWriteAction(sourceClass), "BuilderGenerator", this);
     }

@@ -12,7 +12,9 @@ class BuildMethodGenerator {
         this.elementFactory = elementFactory;
     }
 
-    /** Adds a build() method to the specified builder class, returning the specified source class' type. */
+    /**
+     * Adds a build() method to the specified builder class, returning the specified source class' type.
+     */
     void addBuildMethod(PsiClass sourceClass, PsiClass builderClass) {
         PsiMethod buildMethod = generateBuildMethod(sourceClass, builderClass);
         builderClass.add(buildMethod);
@@ -22,8 +24,8 @@ class BuildMethodGenerator {
         String sourceClassName = sourceClass.getName();
         return elementFactory.createMethodFromText(
                 "public " + sourceClassName + " build() {\n"
-                + "    return new " + sourceClassName + "(this)\n"
-                +"}"
-        , builderClass);
+                        + "    return new " + sourceClassName + "(this)\n"
+                        + "}"
+                , builderClass);
     }
 }

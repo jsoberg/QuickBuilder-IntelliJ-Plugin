@@ -15,8 +15,10 @@ class SetMethodGenerator {
         this.elementFactory = elementFactory;
     }
 
-    /** Generates set methods for the specified {@link Collection<PsiField>} builder fields, and adds them to the
-     * specified {@link PsiClass} builder class. */
+    /**
+     * Generates set methods for the specified {@link Collection<PsiField>} builder fields, and adds them to the
+     * specified {@link PsiClass} builder class.
+     */
     void addSetMethods(PsiClass builderClass, Collection<PsiField> builderFields) throws BuilderGenerationException {
         for (PsiField field : builderFields) {
             addSetMethodToBuilder(builderClass, field);
@@ -37,7 +39,7 @@ class SetMethodGenerator {
         String fieldType = parentField.getType().getPresentableText();
         String methodText = "public Builder " + methodName + "(" + fieldType + " " + fieldName + ")"
                 + " { this." + fieldName + " = " + fieldName + "; return this; }";
-       return elementFactory.createMethodFromText(methodText, parentField);
+        return elementFactory.createMethodFromText(methodText, parentField);
     }
 
     private String getSetMethodName(String fieldName) {

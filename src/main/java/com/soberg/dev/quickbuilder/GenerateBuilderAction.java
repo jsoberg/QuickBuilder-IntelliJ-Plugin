@@ -2,16 +2,11 @@ package com.soberg.dev.quickbuilder;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.soberg.dev.quickbuilder.environment.CurrentlyOpenedClass;
-import com.soberg.dev.quickbuilder.generation.BuilderGenerationException;
-import com.soberg.dev.quickbuilder.generation.BuilderGenerator;
 import org.jetbrains.annotations.NotNull;
 
 public class GenerateBuilderAction extends AnAction {

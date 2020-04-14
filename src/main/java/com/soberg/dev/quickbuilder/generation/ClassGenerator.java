@@ -1,6 +1,9 @@
 package com.soberg.dev.quickbuilder.generation;
 
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiModifierList;
 
 class ClassGenerator {
 
@@ -10,7 +13,9 @@ class ClassGenerator {
         this.elementFactory = elementFactory;
     }
 
-    /** Generates an empty builder {@link PsiClass}. */
+    /**
+     * Generates an empty builder {@link PsiClass}.
+     */
     PsiClass generateBuilderClass() throws BuilderGenerationException {
         PsiClass builderClass = elementFactory.createClass("Builder");
         addClassModifiers(builderClass);
