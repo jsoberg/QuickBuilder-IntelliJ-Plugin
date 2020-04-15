@@ -1,7 +1,11 @@
 package com.soberg.dev.quickbuilder.generation;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiMethod;
+
+import javax.inject.Inject;
 
 public class ConstructorGenerator {
 
@@ -9,9 +13,9 @@ public class ConstructorGenerator {
 
     private final PsiElementFactory elementFactory;
 
-    public ConstructorGenerator(Project project) {
-        JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(project);
-        this.elementFactory = psiFacade.getElementFactory();
+    @Inject
+    ConstructorGenerator(PsiElementFactory elementFactory) {
+        this.elementFactory = elementFactory;
     }
 
     public PsiMethod generatePrivateConstructor(PsiClass sourceClass, PsiClass builderClass) {

@@ -4,10 +4,13 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiMethod;
 
+import javax.inject.Inject;
+
 class BuildMethodGenerator {
 
     private final PsiElementFactory elementFactory;
 
+    @Inject
     BuildMethodGenerator(PsiElementFactory elementFactory) {
         this.elementFactory = elementFactory;
     }

@@ -1,11 +1,9 @@
 package com.soberg.dev.quickbuilder.generation;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiField;
 
+import javax.inject.Inject;
 import java.util.Collection;
 
 public class BuilderGenerator {
@@ -15,13 +13,15 @@ public class BuilderGenerator {
     private final SetMethodGenerator setMethodGenerator;
     private final BuildMethodGenerator buildMethodGenerator;
 
-    public BuilderGenerator(Project project) {
-        JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(project);
-        PsiElementFactory elementFactory = psiFacade.getElementFactory();
-        this.classGenerator = new ClassGenerator(elementFactory);
-        this.fieldGenerator = new FieldGenerator(elementFactory);
-        this.setMethodGenerator = new SetMethodGenerator(elementFactory);
-        this.buildMethodGenerator = new BuildMethodGenerator(elementFactory);
+    @Inject
+    BuilderGenerator(ClassGenerator classGenerator,
+                     FieldGenerator fieldGenerator,
+                     SetMethodGenerator setMethodGenerator,
+                     BuildMethodGenerator buildMethodGenerator) {
+        this.classGenerator = classGenerator;
+        this.fieldGenerator = fieldGenerator;
+        this.setMethodGenerator = setMethodGenerator;
+        this.buildMethodGenerator = buildMethodGenerator;
     }
 
     public PsiClass generateBuilderClass(PsiClass sourceClass) throws BuilderGenerationException {

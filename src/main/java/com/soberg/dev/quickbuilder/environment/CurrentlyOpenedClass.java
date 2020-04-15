@@ -12,6 +12,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.Nullable;
 
+import javax.inject.Inject;
+
 /**
  * Attempts to find the currently opened class for a specified {@link Project} at the time of instantiation.
  */
@@ -22,7 +24,8 @@ public class CurrentlyOpenedClass {
     @Nullable
     private final PsiClass sourceClass;
 
-    public CurrentlyOpenedClass(Project project) {
+    @Inject
+    CurrentlyOpenedClass(Project project) {
         this.sourceFile = getCurrentlyOpenedFile(project);
         this.sourceClass = sourceFile != null ? findClassForFile(project, sourceFile) : null;
     }

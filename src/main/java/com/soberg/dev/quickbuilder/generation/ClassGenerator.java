@@ -5,10 +5,13 @@ import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
 
+import javax.inject.Inject;
+
 class ClassGenerator {
 
     private final PsiElementFactory elementFactory;
 
+    @Inject
     ClassGenerator(PsiElementFactory elementFactory) {
         this.elementFactory = elementFactory;
     }

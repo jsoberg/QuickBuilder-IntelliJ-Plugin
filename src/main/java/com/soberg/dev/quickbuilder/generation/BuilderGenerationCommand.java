@@ -1,16 +1,14 @@
-package com.soberg.dev.quickbuilder;
+package com.soberg.dev.quickbuilder.generation;
 
 import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
-import com.soberg.dev.quickbuilder.generation.BuilderGenerationException;
-import com.soberg.dev.quickbuilder.generation.BuilderGenerator;
-import com.soberg.dev.quickbuilder.generation.ConstructorGenerator;
 
-class BuilderGenerationCommand {
+import javax.inject.Inject;
+
+public class BuilderGenerationCommand {
 
     private final Project project;
     private final BuilderGenerator builderGenerator;
@@ -18,12 +16,17 @@ class BuilderGenerationCommand {
     private final CommandProcessor processor;
     private final Application application;
 
-    BuilderGenerationCommand(Project project) {
+    @Inject
+    BuilderGenerationCommand(Project project,
+                             BuilderGenerator builderGenerator,
+                             ConstructorGenerator constructorGenerator,
+                             CommandProcessor processor,
+                             Application application) {
         this.project = project;
-        this.builderGenerator = new BuilderGenerator(project);
-        this.constructorGenerator = new ConstructorGenerator(project);
-        this.processor = CommandProcessor.getInstance();
-        this.application = ApplicationManager.getApplication();
+        this.builderGenerator = builderGenerator;
+        this.constructorGenerator = constructorGenerator;
+        this.processor = processor;
+        this.application = application;
     }
 
     /**
@@ -32,7 +35,7 @@ class BuilderGenerationCommand {
      * Note: This action will run within a {@link CommandProcessor}, and within a
      * {@link Application#runWriteAction(Runnable)} call.
      */
-    void execute(PsiClass sourceClass) {
+    public void execute(PsiClass sourceClass) {
         processor.executeCommand(project, () -> runWriteAction(sourceClass), "BuilderGenerator", this);
     }
 

@@ -6,6 +6,7 @@ import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
 import org.jetbrains.annotations.Nullable;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,6 +15,7 @@ class FieldGenerator {
 
     private final PsiElementFactory elementFactory;
 
+    @Inject
     FieldGenerator(PsiElementFactory elementFactory) {
         this.elementFactory = elementFactory;
     }

@@ -6,7 +6,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
+import com.soberg.dev.quickbuilder.di.DaggerQuickBuilderComponent;
+import com.soberg.dev.quickbuilder.di.QuickBuilderComponent;
 import com.soberg.dev.quickbuilder.environment.CurrentlyOpenedClass;
+import com.soberg.dev.quickbuilder.generation.BuilderGenerationCommand;
 import org.jetbrains.annotations.NotNull;
 
 public class GenerateBuilderAction extends AnAction {
@@ -20,14 +23,21 @@ public class GenerateBuilderAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
         Project project = event.getProject();
-        CurrentlyOpenedClass openedClass = new CurrentlyOpenedClass(project);
+        QuickBuilderComponent component = createComponent(project);
+        CurrentlyOpenedClass openedClass = component.currentlyOpenedClass();
         PsiClass sourceClass = openedClass.getSourceClass();
         if (sourceClass != null) {
-            BuilderGenerationCommand command = new BuilderGenerationCommand(project);
+            BuilderGenerationCommand command = component.newCommand();
             command.execute(sourceClass);
         } else {
             showErrorMessage(project, openedClass);
         }
+    }
+
+    private QuickBuilderComponent createComponent(Project project) {
+        return DaggerQuickBuilderComponent.builder()
+                .project(project)
+                .build();
     }
 
     private void showErrorMessage(Project project, CurrentlyOpenedClass openedClass) {

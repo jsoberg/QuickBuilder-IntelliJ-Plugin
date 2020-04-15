@@ -5,12 +5,14 @@ import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 
+import javax.inject.Inject;
 import java.util.Collection;
 
 class SetMethodGenerator {
 
     private final PsiElementFactory elementFactory;
 
+    @Inject
     SetMethodGenerator(PsiElementFactory elementFactory) {
         this.elementFactory = elementFactory;
     }
