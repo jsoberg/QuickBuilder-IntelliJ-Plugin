@@ -12,7 +12,10 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'com.google.dagger:dagger:2.27'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.27'
+
+    testImplementation 'junit:junit:4.13'
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
