@@ -26,8 +26,8 @@ class BuildMethodGenerator {
     private PsiMethod generateBuildMethod(PsiClass sourceClass, PsiClass builderClass) {
         String sourceClassName = sourceClass.getName();
         return elementFactory.createMethodFromText(
-                "public " + sourceClassName + " build() {\n"
-                        + "    return new " + sourceClassName + "(this)\n"
+                "public " + sourceClassName + " build() {"
+                        + "return new " + sourceClassName + "(this);"
                         + "}"
                 , builderClass);
     }
