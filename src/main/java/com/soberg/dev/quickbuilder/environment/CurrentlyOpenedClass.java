@@ -25,9 +25,9 @@ public class CurrentlyOpenedClass {
     private final PsiClass sourceClass;
 
     @Inject
-    CurrentlyOpenedClass(Project project) {
-        this.sourceFile = getCurrentlyOpenedFile(project);
-        this.sourceClass = sourceFile != null ? findClassForFile(project, sourceFile) : null;
+    CurrentlyOpenedClass(FileEditorManager editorManager, PsiManager psiManager) {
+        this.sourceFile = getCurrentlyOpenedFile(editorManager);
+        this.sourceClass = sourceFile != null ? findClassForFile(psiManager, sourceFile) : null;
     }
 
     /**
@@ -49,8 +49,8 @@ public class CurrentlyOpenedClass {
     }
 
     @Nullable
-    private VirtualFile getCurrentlyOpenedFile(@Nullable Project project) {
-        Editor textEditor = (project != null) ? FileEditorManager.getInstance(project).getSelectedTextEditor() : null;
+    private VirtualFile getCurrentlyOpenedFile(FileEditorManager editorManager) {
+        Editor textEditor = editorManager.getSelectedTextEditor();
         if (textEditor == null) {
             return null;
         }
@@ -59,8 +59,8 @@ public class CurrentlyOpenedClass {
     }
 
     @Nullable
-    private PsiClass findClassForFile(Project project, VirtualFile sourceFile) {
-        PsiFile psiFile = PsiManager.getInstance(project).findFile(sourceFile);
+    private PsiClass findClassForFile(PsiManager psiManager, VirtualFile sourceFile) {
+        PsiFile psiFile = psiManager.findFile(sourceFile);
         if (!(psiFile instanceof PsiClassOwner)) {
             return null;
         }
