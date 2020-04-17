@@ -4,21 +4,22 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class ClassGeneratorTest {
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
 
     @Mock
     private PsiClass psiClass;
@@ -29,15 +30,15 @@ public class ClassGeneratorTest {
 
     private ClassGenerator classGenerator;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        doReturn(modifiers).when(psiClass).getModifierList();
         doReturn(psiClass).when(elementFactory).createClass(any());
         classGenerator = new ClassGenerator(elementFactory);
     }
 
     @Test
     public void generateBuilderClass() throws BuilderGenerationException {
+        doReturn(modifiers).when(psiClass).getModifierList();
         classGenerator.generateBuilderClass();
         verify(elementFactory).createClass("Builder");
         verify(modifiers).setModifierProperty(PsiModifier.PUBLIC, true);
@@ -46,10 +47,10 @@ public class ClassGeneratorTest {
     }
 
     @Test
-    public void generateBuilderClassWithNullModifierList() throws BuilderGenerationException {
-        exception.expect(BuilderGenerationException.class);
-        exception.expectMessage("Problem finding modifier list for Builder class");
+    public void generateBuilderClassWithNullModifierList() {
         doReturn(null).when(psiClass).getModifierList();
-        classGenerator.generateBuilderClass();
+        BuilderGenerationException exception =
+                assertThrows(BuilderGenerationException.class, () -> classGenerator.generateBuilderClass());
+        assertThat(exception.getMessage(), is("Problem finding modifier list for Builder class"));
     }
 }
