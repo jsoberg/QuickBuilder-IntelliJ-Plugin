@@ -18,6 +18,13 @@ class ConstructorGenerator {
         this.elementFactory = elementFactory;
     }
 
+    /**
+     * Pre-Condition: Assumes that the specified builderClass's fields are a subset of specified sourceClass' fields.
+     * Assumes that these fields share names.
+     * <p>
+     * Generates a private constructor for the specified source class. This constructor will set all fields from the
+     * provided builder class, in the manner "this.field = builder.field".
+     */
     PsiMethod generatePrivateConstructor(PsiClass sourceClass, PsiClass builderClass) {
         String constructorText = generateConstructorText(sourceClass, builderClass);
         return elementFactory.createMethodFromText(constructorText, sourceClass);
