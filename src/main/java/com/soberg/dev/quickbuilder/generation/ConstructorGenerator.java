@@ -7,7 +7,7 @@ import com.intellij.psi.PsiMethod;
 
 import javax.inject.Inject;
 
-public class ConstructorGenerator {
+class ConstructorGenerator {
 
     private static final String BUILDER_VAR_NAME = "builder";
 
@@ -18,7 +18,7 @@ public class ConstructorGenerator {
         this.elementFactory = elementFactory;
     }
 
-    public PsiMethod generatePrivateConstructor(PsiClass sourceClass, PsiClass builderClass) {
+    PsiMethod generatePrivateConstructor(PsiClass sourceClass, PsiClass builderClass) {
         String constructorText = generateConstructorText(sourceClass, builderClass);
         return elementFactory.createMethodFromText(constructorText, sourceClass);
     }
