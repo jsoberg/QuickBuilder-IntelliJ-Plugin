@@ -55,6 +55,8 @@ public class SetMethodGeneratorTest {
         when(field2.getType()).thenReturn(type2);
         generator.addSetMethods(builderClass, Arrays.asList(field1, field2));
 
+        verify(builderClass, times(2)).add(any());
+        
         ArgumentCaptor<String> textCaptor = ArgumentCaptor.forClass(String.class);
         verify(elementFactory).createMethodFromText(textCaptor.capture(), eq(field1));
         String method1Text = textCaptor.getValue();
