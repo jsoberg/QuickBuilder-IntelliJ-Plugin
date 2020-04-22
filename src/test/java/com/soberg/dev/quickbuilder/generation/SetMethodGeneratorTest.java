@@ -14,14 +14,21 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class SetMethodGeneratorTest {
+
+    @Mock
+    private PsiField field1;
+    @Mock
+    private PsiType fieldType1;
 
     @Mock
     private PsiClass builderClass;
@@ -37,11 +44,9 @@ public class SetMethodGeneratorTest {
 
     @Test
     public void addSetMethods() throws BuilderGenerationException {
-        PsiField field1 = mock(PsiField.class);
         when(field1.getName()).thenReturn("field1");
-        PsiType type1 = mock(PsiType.class);
-        when(type1.getPresentableText()).thenReturn("Field1Type");
-        when(field1.getType()).thenReturn(type1);
+        when(fieldType1.getPresentableText()).thenReturn("Field1Type");
+        when(field1.getType()).thenReturn(fieldType1);
 
         PsiField field2 = mock(PsiField.class);
         when(field2.getName()).thenReturn("field2");
@@ -68,5 +73,31 @@ public class SetMethodGeneratorTest {
                         + "return this; "
                         + "}";
         assertThat(method2Text, is(expectedMethod2Text));
+    }
+
+    @Test
+    public void generateSetMethodForSingleCharacterFieldName() throws BuilderGenerationException {
+        when(field1.getName()).thenReturn("a");
+        when(fieldType1.getPresentableText()).thenReturn("Field1Type");
+        when(field1.getType()).thenReturn(fieldType1);
+        generator.addSetMethods(builderClass, Collections.singletonList(field1));
+
+        ArgumentCaptor<String> textCaptor = ArgumentCaptor.forClass(String.class);
+        verify(elementFactory).createMethodFromText(textCaptor.capture(), eq(field1));
+        String method1Text = textCaptor.getValue();
+        String expectedMethod1Text =
+                "public Builder setA(Field1Type a) { "
+                        + "this.a = a; "
+                        + "return this; "
+                        + "}";
+        assertThat(method1Text, is(expectedMethod1Text));
+    }
+
+    @Test
+    public void fieldWithNoNameThrowsException() {
+        when(field1.getName()).thenReturn(null);
+        BuilderGenerationException exception = assertThrows(BuilderGenerationException.class,
+                () -> generator.addSetMethods(builderClass, Collections.singletonList(field1)));
+        assertThat(exception.getMessage(), is("Could not find name for field " + field1));
     }
 }
