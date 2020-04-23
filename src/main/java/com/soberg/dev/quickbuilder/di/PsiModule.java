@@ -1,5 +1,6 @@
 package com.soberg.dev.quickbuilder.di;
 
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
@@ -23,6 +24,11 @@ public class PsiModule {
     @Provides
     static FileEditorManager fileEditorManager(Project project) {
         return FileEditorManager.getInstance(project);
+    }
+
+    @Provides
+    static FileDocumentManager fileDocumentManager() {
+        return FileDocumentManager.getInstance();
     }
 
     @Provides
