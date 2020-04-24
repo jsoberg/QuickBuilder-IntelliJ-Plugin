@@ -13,6 +13,7 @@ import com.soberg.dev.quickbuilder.di.DaggerQuickBuilderComponent;
 import com.soberg.dev.quickbuilder.di.QuickBuilderComponent;
 import com.soberg.dev.quickbuilder.environment.CurrentlyOpenedClass;
 import com.soberg.dev.quickbuilder.generation.BuilderGenerationCommand;
+import com.soberg.dev.quickbuilder.generation.GenerationConstants;
 import org.jetbrains.annotations.NotNull;
 
 public class GenerateBuilderAction extends AnAction {
@@ -31,11 +32,13 @@ public class GenerateBuilderAction extends AnAction {
         QuickBuilderComponent component = createComponent(project);
         CurrentlyOpenedClass openedClass = component.currentlyOpenedClass();
         PsiClass sourceClass = openedClass.getSourceClass();
-        if (sourceClass != null) {
+        if (sourceClass == null) {
+            notifyCannotCreateBuilderError(project, openedClass);
+        } else if (openedClass.containsInnerClassWithName(GenerationConstants.BUILDER_CLASS_NAME)) {
+            notifyBuilderAlreadyExists(project, sourceClass);
+        } else {
             BuilderGenerationCommand command = component.newCommand();
             command.execute(sourceClass);
-        } else {
-            notifyCannotCreateBuilderError(project, openedClass);
         }
     }
 
@@ -50,6 +53,12 @@ public class GenerateBuilderAction extends AnAction {
         String message = (sourceFile != null) ?
                 "Cannot create builder for " + sourceFile.getNameWithoutExtension() : "Cannot create builder";
         Notification notification = notificationGroup.createNotification(message, NotificationType.ERROR);
+        notification.notify(project);
+    }
+
+    private void notifyBuilderAlreadyExists(Project project, @NotNull PsiClass sourceClass) {
+        String message = sourceClass.getName() + " already has a builder";
+        Notification notification = notificationGroup.createNotification(message, NotificationType.INFORMATION);
         notification.notify(project);
     }
 }
