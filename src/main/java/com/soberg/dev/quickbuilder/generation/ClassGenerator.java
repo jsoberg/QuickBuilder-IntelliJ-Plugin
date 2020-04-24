@@ -20,7 +20,7 @@ class ClassGenerator {
      * Generates an empty builder {@link PsiClass}.
      */
     PsiClass generateBuilderClass() throws BuilderGenerationException {
-        PsiClass builderClass = elementFactory.createClass("Builder");
+        PsiClass builderClass = elementFactory.createClass(GenerationConstants.BUILDER_CLASS_NAME);
         addClassModifiers(builderClass);
         return builderClass;
     }
