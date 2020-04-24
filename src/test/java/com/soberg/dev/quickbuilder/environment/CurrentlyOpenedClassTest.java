@@ -51,10 +51,7 @@ public class CurrentlyOpenedClassTest {
 
     @Test
     public void nullGetFile() {
-        Editor editor = mock(Editor.class);
-        when(fileEditorManager.getSelectedTextEditor()).thenReturn(editor);
-        Document document = mock(Document.class);
-        when(editor.getDocument()).thenReturn(document);
+        Document document = setupDocumentEditorReturns();
         when(fileDocumentManager.getFile(document)).thenReturn(null);
         CurrentlyOpenedClass currentlyOpenedClass = create();
 
@@ -65,89 +62,67 @@ public class CurrentlyOpenedClassTest {
         assertThat(currentlyOpenedClass.getSourceClass(), is(nullValue()));
     }
 
-    @Test
-    public void psiManagerCantFindFile() {
+    private Document setupDocumentEditorReturns() {
         Editor editor = mock(Editor.class);
         when(fileEditorManager.getSelectedTextEditor()).thenReturn(editor);
         Document document = mock(Document.class);
         when(editor.getDocument()).thenReturn(document);
+        return document;
+    }
+
+    @Test
+    public void psiManagerCantFindFile() {
+        Document document = setupDocumentEditorReturns();
         VirtualFile virtualFile = mock(VirtualFile.class);
         when(fileDocumentManager.getFile(document)).thenReturn(virtualFile);
         when(psiManager.findFile(virtualFile)).thenReturn(null);
-        CurrentlyOpenedClass currentlyOpenedClass = create();
+        verifyExpectedCalls(document, virtualFile, null);
+    }
 
+    private void verifyExpectedCalls(Document document, VirtualFile file, PsiClass sourceClass) {
+        CurrentlyOpenedClass currentlyOpenedClass = create();
         verify(fileEditorManager).getSelectedTextEditor();
         verify(fileDocumentManager).getFile(document);
-        verify(psiManager).findFile(virtualFile);
-        assertThat(currentlyOpenedClass.getFile(), is(virtualFile));
-        assertThat(currentlyOpenedClass.getSourceClass(), is(nullValue()));
+        verify(psiManager).findFile(file);
+        assertThat(currentlyOpenedClass.getFile(), is(file));
+        assertThat(currentlyOpenedClass.getSourceClass(), is(sourceClass));
     }
 
     @Test
     public void psiManagerFindsNonClassOwnerFile() {
-        Editor editor = mock(Editor.class);
-        when(fileEditorManager.getSelectedTextEditor()).thenReturn(editor);
-        Document document = mock(Document.class);
-        when(editor.getDocument()).thenReturn(document);
+        Document document = setupDocumentEditorReturns();
         VirtualFile virtualFile = mock(VirtualFile.class);
         when(fileDocumentManager.getFile(document)).thenReturn(virtualFile);
         when(psiManager.findFile(virtualFile)).thenReturn(mock(PsiFile.class));
-        CurrentlyOpenedClass currentlyOpenedClass = create();
-
-        verify(fileEditorManager).getSelectedTextEditor();
-        verify(fileDocumentManager).getFile(document);
-        verify(psiManager).findFile(virtualFile);
-        assertThat(currentlyOpenedClass.getFile(), is(virtualFile));
-        assertThat(currentlyOpenedClass.getSourceClass(), is(nullValue()));
+        verifyExpectedCalls(document, virtualFile, null);
     }
 
     @Test
     public void psiManagerFindsClassOwnerWithMoreThanOneClass() {
-        Editor editor = mock(Editor.class);
-        when(fileEditorManager.getSelectedTextEditor()).thenReturn(editor);
-        Document document = mock(Document.class);
-        when(editor.getDocument()).thenReturn(document);
+        Document document = setupDocumentEditorReturns();
         VirtualFile virtualFile = mock(VirtualFile.class);
         when(fileDocumentManager.getFile(document)).thenReturn(virtualFile);
         PsiClassOwner psiFile = mock(PsiClassOwner.class);
         when(psiFile.getClasses()).thenReturn(new PsiClass[2]);
         when(psiManager.findFile(virtualFile)).thenReturn(psiFile);
-        CurrentlyOpenedClass currentlyOpenedClass = create();
-
-        verify(fileEditorManager).getSelectedTextEditor();
-        verify(fileDocumentManager).getFile(document);
-        verify(psiManager).findFile(virtualFile);
-        assertThat(currentlyOpenedClass.getFile(), is(virtualFile));
-        assertThat(currentlyOpenedClass.getSourceClass(), is(nullValue()));
+        verifyExpectedCalls(document, virtualFile, null);
     }
 
     @Test
     public void psiManagerFindsClassOwnerWithOneClass() {
-        Editor editor = mock(Editor.class);
-        when(fileEditorManager.getSelectedTextEditor()).thenReturn(editor);
-        Document document = mock(Document.class);
-        when(editor.getDocument()).thenReturn(document);
+        Document document = setupDocumentEditorReturns();
         VirtualFile virtualFile = mock(VirtualFile.class);
         when(fileDocumentManager.getFile(document)).thenReturn(virtualFile);
         PsiClassOwner psiFile = mock(PsiClassOwner.class);
         PsiClass psiClass = mock(PsiClass.class);
         when(psiFile.getClasses()).thenReturn(new PsiClass[]{psiClass});
         when(psiManager.findFile(virtualFile)).thenReturn(psiFile);
-        CurrentlyOpenedClass currentlyOpenedClass = create();
-
-        verify(fileEditorManager).getSelectedTextEditor();
-        verify(fileDocumentManager).getFile(document);
-        verify(psiManager).findFile(virtualFile);
-        assertThat(currentlyOpenedClass.getFile(), is(virtualFile));
-        assertThat(currentlyOpenedClass.getSourceClass(), is(psiClass));
+        verifyExpectedCalls(document, virtualFile, psiClass);
     }
 
     @Test
     public void containsInnerClass() {
-        Editor editor = mock(Editor.class);
-        when(fileEditorManager.getSelectedTextEditor()).thenReturn(editor);
-        Document document = mock(Document.class);
-        when(editor.getDocument()).thenReturn(document);
+        Document document = setupDocumentEditorReturns();
         VirtualFile virtualFile = mock(VirtualFile.class);
         when(fileDocumentManager.getFile(document)).thenReturn(virtualFile);
         PsiClassOwner psiFile = mock(PsiClassOwner.class);
@@ -159,11 +134,13 @@ public class CurrentlyOpenedClassTest {
         when(psiClass.getInnerClasses()).thenReturn(new PsiClass[0]);
         boolean containsClass = currentlyOpenedClass.containsInnerClassWithName("RightName");
         assertThat(containsClass, is(false));
+
         PsiClass innerClass = mock(PsiClass.class);
         when(psiClass.getInnerClasses()).thenReturn(new PsiClass[]{innerClass});
         when(innerClass.getName()).thenReturn("WrongName");
         containsClass = currentlyOpenedClass.containsInnerClassWithName("RightName");
         assertThat(containsClass, is(false));
+
         when(innerClass.getName()).thenReturn("RightName");
         containsClass = currentlyOpenedClass.containsInnerClassWithName("RightName");
         assertThat(containsClass, is(true));
