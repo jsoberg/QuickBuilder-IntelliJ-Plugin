@@ -141,4 +141,31 @@ public class CurrentlyOpenedClassTest {
         assertThat(currentlyOpenedClass.getFile(), is(virtualFile));
         assertThat(currentlyOpenedClass.getSourceClass(), is(psiClass));
     }
+
+    @Test
+    public void containsInnerClass() {
+        Editor editor = mock(Editor.class);
+        when(fileEditorManager.getSelectedTextEditor()).thenReturn(editor);
+        Document document = mock(Document.class);
+        when(editor.getDocument()).thenReturn(document);
+        VirtualFile virtualFile = mock(VirtualFile.class);
+        when(fileDocumentManager.getFile(document)).thenReturn(virtualFile);
+        PsiClassOwner psiFile = mock(PsiClassOwner.class);
+        PsiClass psiClass = mock(PsiClass.class);
+        when(psiFile.getClasses()).thenReturn(new PsiClass[]{psiClass});
+        when(psiManager.findFile(virtualFile)).thenReturn(psiFile);
+        CurrentlyOpenedClass currentlyOpenedClass = create();
+
+        when(psiClass.getInnerClasses()).thenReturn(new PsiClass[0]);
+        boolean containsClass = currentlyOpenedClass.containsInnerClassWithName("RightName");
+        assertThat(containsClass, is(false));
+        PsiClass innerClass = mock(PsiClass.class);
+        when(psiClass.getInnerClasses()).thenReturn(new PsiClass[]{innerClass});
+        when(innerClass.getName()).thenReturn("WrongName");
+        containsClass = currentlyOpenedClass.containsInnerClassWithName("RightName");
+        assertThat(containsClass, is(false));
+        when(innerClass.getName()).thenReturn("RightName");
+        containsClass = currentlyOpenedClass.containsInnerClassWithName("RightName");
+        assertThat(containsClass, is(true));
+    }
 }

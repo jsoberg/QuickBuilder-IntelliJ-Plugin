@@ -10,6 +10,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
@@ -48,6 +49,22 @@ public class CurrentlyOpenedClass {
     @Nullable
     public PsiClass getSourceClass() {
         return sourceClass;
+    }
+
+    /**
+     * @return true if this source class exists and contains an inner class with the specified name, false otherwise.
+     */
+    public boolean containsInnerClassWithName(@NotNull String innerClassName) {
+        if (sourceClass == null) {
+            return false;
+        }
+        PsiClass[] innerClasses = sourceClass.getInnerClasses();
+        for (PsiClass innerClass : innerClasses) {
+            if (innerClassName.equals(innerClass.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Nullable
