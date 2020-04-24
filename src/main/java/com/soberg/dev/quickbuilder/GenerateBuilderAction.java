@@ -1,9 +1,12 @@
 package com.soberg.dev.quickbuilder;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.soberg.dev.quickbuilder.di.DaggerQuickBuilderComponent;
@@ -13,6 +16,8 @@ import com.soberg.dev.quickbuilder.generation.BuilderGenerationCommand;
 import org.jetbrains.annotations.NotNull;
 
 public class GenerateBuilderAction extends AnAction {
+
+    private final NotificationGroup notificationGroup = new NotificationGroup("QuickBuilder Plugin", NotificationDisplayType.BALLOON, true);
 
     @Override
     public void update(@NotNull AnActionEvent e) {
@@ -30,7 +35,7 @@ public class GenerateBuilderAction extends AnAction {
             BuilderGenerationCommand command = component.newCommand();
             command.execute(sourceClass);
         } else {
-            showErrorMessage(project, openedClass);
+            notifyCannotCreateBuilderError(project, openedClass);
         }
     }
 
@@ -40,11 +45,11 @@ public class GenerateBuilderAction extends AnAction {
                 .build();
     }
 
-    private void showErrorMessage(Project project, CurrentlyOpenedClass openedClass) {
+    private void notifyCannotCreateBuilderError(Project project, CurrentlyOpenedClass openedClass) {
         VirtualFile sourceFile = openedClass.getFile();
-        String message = (sourceFile != null) ? sourceFile.getNameWithoutExtension() + " is not a valid buildable class"
-                : "No buildable class found";
-        String title = "Generate Builder";
-        Messages.showMessageDialog(project, message, title, Messages.getErrorIcon());
+        String message = (sourceFile != null) ?
+                "Cannot create builder for " + sourceFile.getNameWithoutExtension() : "Cannot create builder";
+        Notification notification = notificationGroup.createNotification(message, NotificationType.ERROR);
+        notification.notify(project);
     }
 }
