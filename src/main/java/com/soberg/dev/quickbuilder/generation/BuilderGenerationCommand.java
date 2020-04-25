@@ -1,10 +1,12 @@
 package com.soberg.dev.quickbuilder.generation;
 
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
+import com.soberg.dev.quickbuilder.QuickBuilderNotifier;
 
 import javax.inject.Inject;
 
@@ -15,18 +17,21 @@ public class BuilderGenerationCommand {
     private final ConstructorGenerator constructorGenerator;
     private final CommandProcessor processor;
     private final Application application;
+    private final QuickBuilderNotifier notifier;
 
     @Inject
     BuilderGenerationCommand(Project project,
                              BuilderGenerator builderGenerator,
                              ConstructorGenerator constructorGenerator,
                              CommandProcessor processor,
-                             Application application) {
+                             Application application,
+                             QuickBuilderNotifier notifier) {
         this.project = project;
         this.builderGenerator = builderGenerator;
         this.constructorGenerator = constructorGenerator;
         this.processor = processor;
         this.application = application;
+        this.notifier = notifier;
     }
 
     /**
@@ -50,7 +55,8 @@ public class BuilderGenerationCommand {
             sourceClass.add(builderClass);
             sourceClass.add(constructor);
         } catch (BuilderGenerationException e) {
-            System.err.println("Problem generating builder for source class " + sourceClass.getName());
+            String message = "Problem generating builder for " + sourceClass.getName();
+            notifier.notify(message, NotificationType.ERROR);
             e.printStackTrace();
         }
     }
