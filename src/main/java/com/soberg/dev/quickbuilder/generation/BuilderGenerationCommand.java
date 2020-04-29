@@ -41,7 +41,7 @@ public class BuilderGenerationCommand {
      * {@link Application#runWriteAction(Runnable)} call.
      */
     public void execute(PsiClass sourceClass) {
-        processor.executeCommand(project, () -> runWriteAction(sourceClass), "BuilderGenerator", this);
+        processor.executeCommand(project, () -> runWriteAction(sourceClass), "QuickBuilder-Generator", this);
     }
 
     private void runWriteAction(PsiClass sourceClass) {
