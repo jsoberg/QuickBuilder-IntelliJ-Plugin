@@ -1,6 +1,7 @@
 package com.soberg.dev.quickbuilder.generation;
 
 
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
@@ -50,6 +51,23 @@ public class BuilderGenerationCommandTest {
     @Test
     public void execute() throws BuilderGenerationException {
         PsiClass sourceClass = mock(PsiClass.class);
+        executeAndRunWriteAction(sourceClass);
+
+        PsiClass builderClass = mock(PsiClass.class);
+        when(builderGenerator.generateBuilderClass(sourceClass)).thenReturn(builderClass);
+        PsiMethod constructor = mock(PsiMethod.class);
+        when(constructorGenerator.generatePrivateConstructor(sourceClass, builderClass)).thenReturn(constructor);
+        runnableCaptor.getValue().run();
+        verify(builderGenerator).generateBuilderClass(sourceClass);
+        verify(constructorGenerator).generatePrivateConstructor(sourceClass, builderClass);
+        verify(sourceClass).add(builderClass);
+        verify(sourceClass).add(constructor);
+    }
+
+    /**
+     * Returns the Runnable sent into {@link Application#runWriteAction(Runnable)}.
+     */
+    private Runnable executeAndRunWriteAction(PsiClass sourceClass) {
         command.execute(sourceClass);
 
         // Execute should trigger Application.runWriteAction
@@ -65,15 +83,21 @@ public class BuilderGenerationCommandTest {
         verifyNoInteractions(builderGenerator);
         verifyNoInteractions(sourceClass);
         verify(application).runWriteAction(runnableCaptor.capture());
+        return runnableCaptor.getValue();
+    }
 
-        PsiClass builderClass = mock(PsiClass.class);
-        when(builderGenerator.generateBuilderClass(sourceClass)).thenReturn(builderClass);
-        PsiMethod constructor = mock(PsiMethod.class);
-        when(constructorGenerator.generatePrivateConstructor(sourceClass, builderClass)).thenReturn(constructor);
+    @Test
+    public void executeWithException() throws BuilderGenerationException {
+        PsiClass sourceClass = mock(PsiClass.class);
+        when(sourceClass.getName()).thenReturn("SourceClass");
+        BuilderGenerationException exception = mock(BuilderGenerationException.class);
+        when(builderGenerator.generateBuilderClass(sourceClass)).thenThrow(exception);
+        executeAndRunWriteAction(sourceClass);
+
         runnableCaptor.getValue().run();
         verify(builderGenerator).generateBuilderClass(sourceClass);
-        verify(constructorGenerator).generatePrivateConstructor(sourceClass, builderClass);
-        verify(sourceClass).add(builderClass);
-        verify(sourceClass).add(constructor);
+        verifyNoInteractions(constructorGenerator);
+        verify(notifier).notify("Problem generating builder for SourceClass", NotificationType.ERROR);
+        verify(exception).printStackTrace();
     }
 }
