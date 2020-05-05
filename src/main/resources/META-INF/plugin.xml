@@ -3,12 +3,6 @@
     <version>1.0</version>
     <vendor email="j15soberg [at] gmail.com">j15soberg@gmail.com</vendor>
 
-    <application-components>
-    </application-components>
-
-    <project-components>
-    </project-components>
-
     <actions>
         <action id="com.soberg.dev.quickbuilder.GenerateBuilderAction"
                 class="com.soberg.dev.quickbuilder.GenerateBuilderAction"
