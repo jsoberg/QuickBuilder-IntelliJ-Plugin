@@ -1,9 +1,9 @@
 package com.soberg.dev.quickbuilder.di;
 
 import com.intellij.openapi.project.Project;
-import com.soberg.dev.quickbuilder.QuickBuilderNotifier;
 import com.soberg.dev.quickbuilder.environment.CurrentlyOpenedClass;
 import com.soberg.dev.quickbuilder.generation.BuilderGenerationCommand;
+import com.soberg.dev.quickbuilder.ui.QuickBuilderNotifier;
 import dagger.BindsInstance;
 import dagger.Component;
 

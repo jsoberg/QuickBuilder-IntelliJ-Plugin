@@ -11,6 +11,7 @@ import com.soberg.dev.quickbuilder.di.QuickBuilderComponent;
 import com.soberg.dev.quickbuilder.environment.CurrentlyOpenedClass;
 import com.soberg.dev.quickbuilder.generation.BuilderGenerationCommand;
 import com.soberg.dev.quickbuilder.generation.GenerationConstants;
+import com.soberg.dev.quickbuilder.ui.QuickBuilderNotifier;
 import org.jetbrains.annotations.NotNull;
 
 public class GenerateBuilderAction extends AnAction {

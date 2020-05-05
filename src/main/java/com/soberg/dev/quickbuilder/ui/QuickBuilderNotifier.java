@@ -1,4 +1,4 @@
-package com.soberg.dev.quickbuilder;
+package com.soberg.dev.quickbuilder.ui;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
