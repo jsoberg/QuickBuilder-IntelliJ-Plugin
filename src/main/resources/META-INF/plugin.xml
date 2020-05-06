@@ -3,6 +3,13 @@
     <version>1.0</version>
     <vendor email="j15soberg [at] gmail.com">j15soberg@gmail.com</vendor>
 
+
+    <extensions defaultExtensionNs="com.intellij">
+        <projectService serviceImplementation="com.soberg.dev.quickbuilder.ui.settings.SettingsPreferences"/>
+        <projectConfigurable id="settings.saveactions"
+                             instance="com.soberg.dev.quickbuilder.ui.settings.QuickBuilderSettingsPanel"/>
+    </extensions>
+
     <actions>
         <action id="com.soberg.dev.quickbuilder.GenerateBuilderAction"
                 class="com.soberg.dev.quickbuilder.GenerateBuilderAction"
