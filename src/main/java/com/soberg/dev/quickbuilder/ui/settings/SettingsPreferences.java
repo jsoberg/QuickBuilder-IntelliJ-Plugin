@@ -7,18 +7,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @State(name = "QuickBuilderSettings", storages = {@Storage("quickbuilder_settings.xml")})
-public class SettingsComponent implements PersistentStateComponent<SettingsComponent.State> {
+public class SettingsPreferences implements PersistentStateComponent<SettingsPreferences.State> {
 
-    private SettingsComponent.State state;
+    private SettingsPreferences.State state;
 
     @Nullable
     @Override
-    public SettingsComponent.State getState() {
+    public SettingsPreferences.State getState() {
         return state;
     }
 
     @Override
-    public void loadState(@NotNull SettingsComponent.State state) {
+    public void loadState(@NotNull SettingsPreferences.State state) {
         this.state = state;
     }
 
