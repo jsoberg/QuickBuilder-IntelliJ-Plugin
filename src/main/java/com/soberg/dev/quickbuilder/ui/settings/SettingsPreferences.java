@@ -24,14 +24,34 @@ public class SettingsPreferences implements PersistentStateComponent<SettingsPre
 
     @Override
     public void noStateLoaded() {
-        /* Do nothing. */
+        this.state = new State();
+    }
+
+    public void setFieldModifier(FieldModifier modifier) {
+        this.state = new State(modifier);
+    }
+
+    public enum FieldModifier {
+        PRIVATE("private"),
+        PACKAGE_PRIVATE("package-private"),
+        PUBLIC("public");
+
+        public final String displayName;
+
+        FieldModifier(String displayName) {
+            this.displayName = displayName;
+        }
     }
 
     public static class State {
-        public final boolean usePrivateBuilderFields;
+        public final FieldModifier fieldModifier;
 
-        State(boolean usePrivateBuilderFields) {
-            this.usePrivateBuilderFields = usePrivateBuilderFields;
+        public State() {
+            this.fieldModifier = FieldModifier.PACKAGE_PRIVATE;
+        }
+
+        State(FieldModifier fieldModifier) {
+            this.fieldModifier = fieldModifier;
         }
     }
 }
