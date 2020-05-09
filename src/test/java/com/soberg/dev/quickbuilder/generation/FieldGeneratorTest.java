@@ -1,6 +1,9 @@
 package com.soberg.dev.quickbuilder.generation;
 
 import com.intellij.psi.*;
+import com.soberg.dev.quickbuilder.ui.settings.SettingsPreferences;
+import com.soberg.dev.quickbuilder.ui.settings.SettingsPreferences.FieldModifier;
+import com.soberg.dev.quickbuilder.ui.settings.SettingsPreferences.State;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,18 +26,20 @@ public class FieldGeneratorTest {
 
     @Mock
     private PsiElementFactory elementFactory;
+    @Mock
+    private SettingsPreferences settings;
 
     private FieldGenerator generator;
 
     @BeforeEach
     public void setup() {
-        generator = new FieldGenerator(elementFactory);
+        generator = new FieldGenerator(elementFactory, settings);
     }
 
     @Test
     public void generateBuilderFields() throws BuilderGenerationException {
-        when(elementFactory.createField(any(), any())).thenReturn(mock(PsiField.class));
-        
+        when(elementFactory.createFieldFromText(any(), any())).thenReturn(mock(PsiField.class));
+
         PsiModifierList staticModifiers = mock(PsiModifierList.class);
         when(staticModifiers.hasExplicitModifier(PsiModifier.STATIC)).thenReturn(true);
         PsiField field1 = mock(PsiField.class);
@@ -47,12 +52,26 @@ public class FieldGeneratorTest {
         when(field2.getName()).thenReturn("Field2");
         PsiType field2Type = mock(PsiType.class);
         when(field2.getType()).thenReturn(field2Type);
-
+        when(field2Type.getPresentableText()).thenReturn("Field2Type");
+        // Package-Private
+        State state = new State(FieldModifier.PACKAGE_PRIVATE);
+        when(settings.getPendingState()).thenReturn(state);
         Collection<PsiField> builderFields =
                 generator.generateBuilderFields(new PsiField[]{field1, field2});
         assertThat(builderFields.size(), is(1));
-        verify(elementFactory).createField("Field2", field2Type);
-        verify(elementFactory, times(0)).createField(eq("Field1"), any());
+        verify(elementFactory).createFieldFromText("Field2Type Field2;", field2);
+        // Private
+        state = new State(FieldModifier.PRIVATE);
+        when(settings.getPendingState()).thenReturn(state);
+        builderFields = generator.generateBuilderFields(new PsiField[]{field2});
+        assertThat(builderFields.size(), is(1));
+        verify(elementFactory).createFieldFromText("private Field2Type Field2;", field2);
+        // Public
+        state = new State(FieldModifier.PUBLIC);
+        when(settings.getPendingState()).thenReturn(state);
+        builderFields = generator.generateBuilderFields(new PsiField[]{field2});
+        assertThat(builderFields.size(), is(1));
+        verify(elementFactory).createFieldFromText("public Field2Type Field2;", field2);
     }
 
     @Test

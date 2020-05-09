@@ -69,7 +69,7 @@ public class SettingsPreferences implements PersistentStateComponent<SettingsPre
             this.fieldModifier = FieldModifier.PACKAGE_PRIVATE;
         }
 
-        State(FieldModifier fieldModifier) {
+        public State(FieldModifier fieldModifier) {
             this.fieldModifier = fieldModifier;
         }
 
