@@ -3,6 +3,7 @@ package com.soberg.dev.quickbuilder.ui.settings;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,6 +62,7 @@ public class SettingsPreferences implements PersistentStateComponent<SettingsPre
     }
 
     public static class State {
+        @Attribute
         public final FieldModifier fieldModifier;
 
         public State() {
