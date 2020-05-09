@@ -20,7 +20,7 @@ class FieldModifierPanel {
         panel.setBorder(IdeBorderFactory.createTitledBorder("Builder Field Modifier"));
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-        SettingsPreferences.State state = preferences.getState();
+        SettingsPreferences.State state = preferences.getPendingState();
         addRadioButtons(panel, state);
 
         panel.add(Box.createHorizontalGlue());
@@ -35,7 +35,7 @@ class FieldModifierPanel {
             JRadioButton button = new JRadioButton(modifier.displayName, selected);
             button.addItemListener(e -> {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    preferences.setFieldModifier(modifier);
+                    preferences.setPendingFieldModifier(modifier);
                 }
             });
             panel.add(button);

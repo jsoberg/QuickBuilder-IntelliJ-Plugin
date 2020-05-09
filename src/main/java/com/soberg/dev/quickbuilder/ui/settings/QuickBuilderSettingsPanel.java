@@ -66,10 +66,11 @@ public class QuickBuilderSettingsPanel implements Configurable {
 
     @Override
     public boolean isModified() {
-        return false;
+        return preferences.isModified();
     }
 
     @Override
     public void apply() {
+        preferences.applyChanges();
     }
 }
