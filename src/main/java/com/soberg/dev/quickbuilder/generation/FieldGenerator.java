@@ -4,6 +4,8 @@ import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
+import com.soberg.dev.quickbuilder.ui.settings.SettingsPreferences;
+import com.soberg.dev.quickbuilder.ui.settings.SettingsPreferences.FieldModifier;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
@@ -14,10 +16,12 @@ import java.util.List;
 class FieldGenerator {
 
     private final PsiElementFactory elementFactory;
+    private final SettingsPreferences settings;
 
     @Inject
-    FieldGenerator(PsiElementFactory elementFactory) {
+    FieldGenerator(PsiElementFactory elementFactory, SettingsPreferences settings) {
         this.elementFactory = elementFactory;
+        this.settings = settings;
     }
 
     /**
@@ -56,7 +60,20 @@ class FieldGenerator {
         if (fieldName == null) {
             throw new BuilderGenerationException("Field " + field + " has no name");
         }
-        // We just want a private field of the same name, without any of the other modifiers.
-        return elementFactory.createField(fieldName, field.getType());
+        String modifier = getModifier();
+        return elementFactory.createFieldFromText(modifier + field.getType().getPresentableText() + " " + field.getName() + ";", field);
+    }
+
+    private String getModifier() {
+        FieldModifier modifier = settings.getPendingState().fieldModifier;
+        switch (modifier) {
+            case PUBLIC:
+                return "public ";
+            case PRIVATE:
+                return "private ";
+            case PACKAGE_PRIVATE:
+            default:
+                return "";
+        }
     }
 }
