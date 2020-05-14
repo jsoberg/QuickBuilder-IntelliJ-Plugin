@@ -9,7 +9,6 @@ on:
     branches: [ master ]
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
@@ -22,10 +21,5 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew build
-
-    test:
-      needs: [ build ]
-      name: Tests
-      steps:
-        - name: Run JUnit Tests
-          run: ./gradlew test
+      - name: Run JUnit Tests
+        run: ./gradlew test
