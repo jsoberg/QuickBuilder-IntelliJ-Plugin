@@ -8,11 +8,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.soberg.dev.quickbuilder.di.DaggerQuickBuilderComponent;
 import com.soberg.dev.quickbuilder.di.QuickBuilderComponent;
-import com.soberg.dev.quickbuilder.environment.CurrentlyOpenedClass;
+import com.soberg.dev.quickbuilder.environment.CurrentProjectFile;
 import com.soberg.dev.quickbuilder.generation.BuilderGenerationCommand;
-import com.soberg.dev.quickbuilder.generation.GenerationConstants;
 import com.soberg.dev.quickbuilder.ui.QuickBuilderNotifier;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class GenerateBuilderAction extends AnAction {
 
@@ -27,15 +28,15 @@ public class GenerateBuilderAction extends AnAction {
         Project project = event.getProject();
         QuickBuilderComponent component = createComponent(project);
         QuickBuilderNotifier notifier = component.notifier();
-        CurrentlyOpenedClass openedClass = component.currentlyOpenedClass();
-        PsiClass sourceClass = openedClass.getSourceClass();
-        if (sourceClass == null) {
-            notifyCannotCreateBuilderError(notifier, openedClass);
-        } else if (openedClass.containsInnerClassWithName(GenerationConstants.BUILDER_CLASS_NAME)) {
-            notifyBuilderAlreadyExists(notifier, sourceClass);
+        CurrentProjectFile openedFile = component.currentProjectFile();
+
+        // TODO Ask user which class to create Builder for
+        List<PsiClass> classes = openedFile.getBuildableClasses();
+        if (classes.size() != 1) {
+            notifyCannotCreateBuilder(notifier, openedFile);
         } else {
             BuilderGenerationCommand command = component.newCommand();
-            command.execute(sourceClass);
+            command.execute(classes.get(0));
         }
     }
 
@@ -45,15 +46,10 @@ public class GenerateBuilderAction extends AnAction {
                 .build();
     }
 
-    private void notifyCannotCreateBuilderError(QuickBuilderNotifier notifier, CurrentlyOpenedClass openedClass) {
+    private void notifyCannotCreateBuilder(QuickBuilderNotifier notifier, CurrentProjectFile openedClass) {
         VirtualFile sourceFile = openedClass.getFile();
         String message = (sourceFile != null) ?
                 "Cannot create builder for " + sourceFile.getNameWithoutExtension() : "Cannot create builder";
-        notifier.notify(message, NotificationType.ERROR);
-    }
-
-    private void notifyBuilderAlreadyExists(QuickBuilderNotifier notifier, @NotNull PsiClass sourceClass) {
-        String message = sourceClass.getName() + " already has a builder";
         notifier.notify(message, NotificationType.INFORMATION);
     }
 }

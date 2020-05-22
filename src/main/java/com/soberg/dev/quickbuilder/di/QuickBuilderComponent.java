@@ -1,7 +1,7 @@
 package com.soberg.dev.quickbuilder.di;
 
 import com.intellij.openapi.project.Project;
-import com.soberg.dev.quickbuilder.environment.CurrentlyOpenedClass;
+import com.soberg.dev.quickbuilder.environment.CurrentProjectFile;
 import com.soberg.dev.quickbuilder.generation.BuilderGenerationCommand;
 import com.soberg.dev.quickbuilder.ui.QuickBuilderNotifier;
 import dagger.BindsInstance;
@@ -15,7 +15,7 @@ public interface QuickBuilderComponent {
 
     BuilderGenerationCommand newCommand();
 
-    CurrentlyOpenedClass currentlyOpenedClass();
+    CurrentProjectFile currentProjectFile();
 
     QuickBuilderNotifier notifier();
 
