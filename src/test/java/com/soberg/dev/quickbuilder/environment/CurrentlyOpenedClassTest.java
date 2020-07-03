@@ -1,6 +1,5 @@
 package com.soberg.dev.quickbuilder.environment;
 
-
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
